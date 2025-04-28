@@ -8,11 +8,9 @@ class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', 'words']
+        fields = ['username', 'password', 'words']
 
 class WordsSerializer(serializers.ModelSerializer):
-    user = serializers.CharField(source='user.username')
-    
     class Meta:
         model = Words
-        fields = ['id', 'rightWord', 'wrongWord', 'username']
+        fields = ['id', 'rightWord', 'wrongWord']
