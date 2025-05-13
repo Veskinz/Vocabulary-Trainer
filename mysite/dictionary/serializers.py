@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from .models import Words
 
 class UserSerializer(serializers.ModelSerializer):
-    words = serializers.PrimaryKeyRelatedField(many=True, queryset=Words.objects.all())
+    words = serializers.PrimaryKeyRelatedField(many=True, queryset=Words.objects.all(), required=False)
     password = serializers.CharField(write_only=True)
     
     class Meta:
