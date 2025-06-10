@@ -82,9 +82,15 @@ class WordTestView(APIView):
     def get(self, request, format=None):
         words = list(request.user.words.all())
         if not words:
-            return Response({"detail": "Нямате добавени думи за тест."}, status=status.HTTP_400_BAD_REQUEST)
-
-        selected_words = random.sample(words, min(20, len(words)))
+            return Response({"detail": "You dont have any added words."}, status=status.HTTP_400_BAD_REQUEST)
+        questions_raw = request.GET.get('questions', 20)
+        try:
+            questions = int(questions_raw)
+            if questions <= 0:
+                raise ValueError()
+        except (TypeError, ValueError):
+            return Response({"detail": "Invalid 'questions' parameter. Must be a positive integer."}, status=status.HTTP_400_BAD_REQUEST)
+        selected_words = random.sample(words, min(questions, len(words)))
 
         request.session['test_words'] = [word.id for word in selected_words]
         request.session['test_index'] = 0
@@ -111,7 +117,7 @@ class WordTestView(APIView):
             correct_answers += 1
         
         request.session['last_answer_correct'] = is_correct
-
+        
         request.session['test_index'] = test_index + 1
         request.session['correct_answers'] = correct_answers
         request.session.modified = True
